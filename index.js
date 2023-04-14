@@ -1,3 +1,6 @@
+import Backend from "https://madata.dev/src/index.js";
+
+export const backend = Backend.from("https://github.com/ayeshaali/studio9-starter/data.json");
 // Get references to DOM elements
 export const dom = {
 	tasksList: document.querySelector("#tasks_list"),
@@ -5,25 +8,33 @@ export const dom = {
 	doneCount: document.querySelector("#done_count"),
 	totalCount: document.querySelector("#total_count"),
 	saveButton: document.querySelector("#save_button"),
+	loginButton: document.querySelector("#login_button"),
+	logoutButton: document.querySelector("#logout_button"),
 };
-
-// Initialize data. Do we have anything stored?
-if (localStorage.tasks) {
-	let tasks = JSON.parse(localStorage.tasks);
-	for (let task of tasks) {
-		addItem(task);
-	}
-}
-else {
-	// Add one empty task to start with
-	addItem();
-}
 
 // Save when the save button is clicked
 dom.saveButton.addEventListener("click", e => {
-	localStorage.tasks = JSON.stringify(getData());
+	backend.store(getData());
+	// localStorage.tasks = JSON.stringify(getData());
 });
 
+dom.loginButton.addEventListener("click", e => {
+	backend.login();
+});
+
+dom.logoutButton.addEventListener("click", e => {
+	backend.logout();
+});
+
+backend.addEventListener("mv-login", evt => {
+	document.querySelector("#app").classList.add("logged-in");
+	document.querySelector("#user").innerHTML = `<img src=${backend.user.avatar} width=100px/> <p>Logged in as ${backend.user.username} </p>`;
+});
+
+backend.addEventListener("mv-logout", evt => {
+	document.querySelector("#app").classList.remove("logged-in");
+	document.querySelector("#user").innerHTML = "";
+});
 // Keyboard shortcuts
 dom.tasksList.addEventListener("keyup", e => {
 	if (!e.target.matches("input.title")) {
@@ -130,4 +141,9 @@ function updateTotalCount () {
 function updateCounts () {
 	updateDoneCount();
 	updateTotalCount();
+}
+
+export const json = await backend.load();
+for (let task of json) {
+	addItem(task);
 }

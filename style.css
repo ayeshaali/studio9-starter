@@ -20,3 +20,23 @@ input[type="text"] {
 	font-style: italic;
 	text-decoration: line-through;
 }
+
+.logged-in #login_button {
+	display: none;
+}
+
+.logged-in #logout_button {
+	display: inherit;
+}
+
+#login_button {
+	display: inherit;
+}
+
+#logout_button {
+	display: none;
+}
+
+img {
+	border-radius: 50%;
+}
